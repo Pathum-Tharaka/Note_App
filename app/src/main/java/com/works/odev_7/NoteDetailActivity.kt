@@ -8,46 +8,50 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 
+// NoteDetailActivity class for displaying details of a specific note
 class NoteDetailActivity : AppCompatActivity() {
-    lateinit var btnDelete : Button
-    lateinit var txtDetailTitle : TextView
-    lateinit var txtDetailDetail : TextView
-    lateinit var txtDetailDate : TextView
-    lateinit var db : DB
 
+    // UI elements declaration
+    lateinit var btnDelete: Button
+    lateinit var txtDetailTitle: TextView
+    lateinit var txtDetailDetail: TextView
+    lateinit var txtDetailDate: TextView
+    lateinit var db: DB
+
+    // Function called when the activity is created
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note_detail)
 
+        // Initialize UI elements
         btnDelete = findViewById(R.id.btnDelete)
         txtDetailTitle = findViewById(R.id.txtDetailTitle)
         txtDetailDetail = findViewById(R.id.txtDetailDetail)
         txtDetailDate = findViewById(R.id.txtDetailDate)
 
+        // Initialize database handler
         db = DB(applicationContext)
 
-        txtDetailTitle.text =  intent.getStringExtra("Title")
+        // Set text of TextViews with note details received from intent
+        txtDetailTitle.text = intent.getStringExtra("Title")
         txtDetailDetail.text = "  " + intent.getStringExtra("Detail")
         txtDetailDate.text = "Date : " + intent.getStringExtra("Date") + "     "
         val NID = intent.getIntExtra("NID",0)
 
+        // OnClickListener for the delete button to delete the note
         btnDelete.setOnClickListener {
-            var alert = AlertDialog.Builder(this)
-            alert.setMessage("Are you sure you wanna delete this note?")
-            alert.setCancelable(false) // Bir yere tıklanıldığında iptal edilmesini önledim
-            alert.setNegativeButton("Cancel",DialogInterface.OnClickListener { dialogInterface, i ->
-                Log.d("Cancel","Silmekten vazgeçildi")
+            val alert = AlertDialog.Builder(this)
+            alert.setMessage("Are you sure you want to delete this note?")
+            alert.setCancelable(false)
+            alert.setNegativeButton("Cancel", DialogInterface.OnClickListener { dialogInterface, i ->
+                Log.d("Cancel", "Deletion canceled")
             })
-            alert.setPositiveButton("Yes",DialogInterface.OnClickListener { dialogInterface, i ->
+            alert.setPositiveButton("Yes", DialogInterface.OnClickListener { dialogInterface, i ->
                 val status = db.deleteNote(NID)
-                Log.d("status",status.toString())
+                Log.d("status", status.toString())
                 finish()
             })
             alert.show()
-        // Notu sildikten sonra bu activity'de işimiz olmadığından sonlandırıyorum onResume tetikleniyor MainActivityde
         }
-
-
     }
-
 }
